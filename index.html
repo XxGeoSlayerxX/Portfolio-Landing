@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tyler Coull — GIS & Data Science</title>
+  <meta name="description" content="Tyler Coull — GIS & data-science projects. Explore RentAtlas, an interactive rental suitability map built with GeoPandas and Leaflet." />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Tyler Coull — GIS & Data Science" />
+  <meta property="og:description" content="Interactive maps, reproducible pipelines, and data-driven GIS. See RentAtlas — an interactive rental suitability map." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/XxGeoSlayerxX/rentatlasfinal/main/images/rentatlas-preview.png" />
+  <meta property="og:url" content="https://tylercoull.ca/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <style>
+    :root{
+      --olive: #606C38;
+      --deep:  #283618;
+      --cream: #FEFAE0;
+      --tan:   #DDA15E;
+      --copper:#BC6C25;
+      --page-olive: #4f5f2f;
+      --card-bg: var(--cream);
+      --muted: #5b6252;
+      --radius: 16px;
+      --maxw: 1100px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color-scheme: light;
+    }
+
+    html,body { height:100%; margin:0; background: linear-gradient(180deg, var(--page-olive) 0%, #5a6b39 100%); color:var(--deep); }
+
+    .wrap{
+      max-width:var(--maxw);
+      margin: 3vh auto;
+      padding: 28px;
+      min-height: calc(100vh - 48px);
+      display:flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    /* make the card a consistent block that stretches both columns */
+    .card{
+      width:100%;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:24px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding:28px;
+      box-shadow: 0 18px 60px rgba(10,12,8,0.25);
+      border: 1px solid rgba(0,0,0,0.05);
+      box-sizing: border-box;
+      align-items:stretch;   /* ensure both columns match height */
+      min-height: 420px;     /* base height so buttons fill the space nicely */
+    }
+
+    .hero{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      position:relative;
+      padding-left:18px;
+      height:100%;
+      box-sizing:border-box;
+    }
+    .hero::before{
+      content:"";
+      position:absolute;
+      left:0; top:18px; bottom:18px;
+      width:6px;
+      background: linear-gradient(180deg, var(--olive), #4a5c29);
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(85,95,38,0.08);
+    }
+
+    .kicker{
+      display:inline-block;
+      background:var(--olive);
+      color: var(--cream);
+      padding:8px 12px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:13px;
+      box-shadow: 0 6px 18px rgba(96,108,56,0.08);
+      width:fit-content;
+    }
+
+    h1 { margin:0; font-size: clamp(26px, 3.8vw, 38px); line-height:1.02; color:var(--deep); }
+    .subtitle { margin:0; color:var(--muted); font-size: clamp(14px, 1.8vw, 16px); max-width: 70ch; }
+
+    /* Actions: fill available vertical space and center buttons */
+    .actions {
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      margin-top:8px;
+      flex:1 1 auto;           /* take remaining vertical space */
+      justify-content:center;  /* center buttons within that space */
+      align-items:stretch;     /* make buttons full width */
+      box-sizing:border-box;
+      padding-right:10px;      /* small breathing room from left edge */
+    }
+
+    /* Buttons — full width of left column */
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:40px 9px;
+      border-radius:14px;
+      text-decoration:none;
+      font-weight:800;
+      color:white;
+      width:100%;
+      font-size:16px;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .btn:hover { transform: translateY(-3px); }
+
+    /* LinkedIn blue */
+    .btn.linkedin {
+      background: linear-gradient(90deg, #0077B5, #005582);
+      box-shadow: 0 14px 40px rgba(0,119,181,0.12);
+    }
+
+    /* RentAtlas warm/orange */
+    .btn.rent {
+      background: linear-gradient(90deg, var(--tan), var(--copper));
+      box-shadow: 0 14px 40px rgba(188,108,37,0.12);
+    }
+
+    .project {
+      border-radius: 12px;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(96,108,56,0.04), rgba(255,255,255,0.01));
+      border:1px solid rgba(0,0,0,0.03);
+      box-sizing:border-box;
+      justify-content:flex-start;
+      height:100%;
+    }
+    .proj-title { font-size:18px; font-weight:800; color:var(--deep); }
+    .proj-meta { color:var(--muted); font-size:13px; }
+    .proj-desc { color:var(--muted); font-size:14px; line-height:1.45; }
+
+    /* Static screenshot styling — fixed height so columns match visually */
+    .screenshot { width:100%; border-radius:10px; overflow:hidden; border:1px solid rgba(0,0,0,0.04); box-shadow: 0 8px 26px rgba(0,0,0,0.08); background:#f2f2e9; display:block; height:320px; }
+    .screenshot img { display:block; width:100%; height:100%; object-fit:cover; }
+
+    footer { margin-top:18px; color:var(--muted); font-size:13px; text-align:center; }
+
+    /* Responsiveness */
+    @media (max-width: 1100px) {
+      .card { grid-template-columns: 1fr 420px; }
+    }
+    @media (max-width: 980px) {
+      /* stack columns; make buttons horizontal and full width */
+      .wrap { padding:18px; min-height: unset; }
+      .card { grid-template-columns: 1fr; padding:20px; gap:18px; min-height: unset; }
+      .actions { flex-direction:row; gap:12px; justify-content:flex-start; align-items:center; padding-right:0; }
+      .btn { width:50%; min-width:0; }
+      .screenshot { height:260px; }
+    }
+    @media (max-width: 480px) {
+      .actions { flex-direction:column; }
+      .btn { width:100%; }
+      .screenshot { height:200px; }
+    }
+
+    a:focus { outline: 4px solid rgba(96,108,56,0.18); outline-offset:3px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="main" aria-labelledby="hero-title">
+      <div class="hero">
+        <div class="kicker">GIS · SPATIAL ANALYSIS · URBAN PLANNING · DATA SCIENCE</div>
+        <h1 id="hero-title">Tyler Coull</h1>
+        <p class="subtitle">I build solid geospatial pipelines to answer compelling spatial questions and publish intuitive web maps to share these findings. Clear methods, performant outputs and authentic results.</p>
+
+        <div class="actions" aria-label="Primary actions">
+          <!-- LinkedIn: blue -->
+          <a class="btn linkedin" href="https://www.linkedin.com/in/your-linkedin-handle/" target="_blank" rel="noopener">LinkedIn</a>
+
+          <!-- RentAtlas: warm/orange -->
+          <a class="btn rent" href="https://XxGeoSlayerxX.github.io/rentatlasfinal/" target="_blank" rel="noopener">Open RentAtlas</a>
+        </div>
+
+        <div style="margin-top:auto;color:var(--muted);font-size:13px">
+          <strong>Fast demos</strong> • Reproducible notebooks • Lightweight front-end
+        </div>
+      </div>
+
+      <aside class="project" aria-labelledby="proj-title">
+        <div>
+          <div class="proj-title" id="proj-title">RentAtlas</div>
+          <div class="proj-meta">Python · GeoPandas · Leaflet · GeoJSON</div>
+        </div>
+
+        <!-- Static screenshot preview -->
+        <div class="screenshot" role="img" aria-label="RentAtlas preview">
+          <img src="images/rentatlas-preview.png" alt="RentAtlas choropleth preview showing neighbourhood suitability">
+        </div>
+
+        <div class="proj-desc">Processed raw municipal datasets into a compact GeoJSON, combined indicators into defensible scores, and produced a clear, responsive map UI optimized for clarity and speed.</div>
+      </aside>
+    </div>
+  </div>
+
+  <footer>
+    © <strong>Tyler Coull</strong> • <a href="mailto:t_coull@live.concordia.ca">t_coull@live.concordia.ca</a> • Made with GeoPandas & Leaflet
+  </footer>
+</body>
+</html>
