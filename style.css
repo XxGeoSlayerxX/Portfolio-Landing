@@ -1,0 +1,14 @@
+/* Make the map fill the visible area but leave room for header/controls */
+#map {
+  width: 100%;
+  height: calc(100vh - 140px); /* adjust 140px to match your header + controls height */
+  min-height: 360px;
+}
+
+/* Smaller devices: keep map tall but allow room for stacked controls */
+@media (max-width: 780px) {
+  #map {
+    height: calc(100vh - 220px); /* leaves room for vertically stacked controls/legend */
+    min-height: 320px;
+  }
+}

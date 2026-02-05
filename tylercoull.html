@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tyler Coull — GIS & Data Science</title>
+  <meta name="description" content="Tyler Coull — GIS & data-science projects. Explore RentAtlas, an interactive rental suitability map built with GeoPandas and Leaflet." />
+
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="Tyler Coull — GIS & Data Science" />
+  <meta property="og:description" content="Interactive maps, reproducible pipelines, and data-driven GIS. See RentAtlas — an interactive rental suitability map." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/XxGeoSlayerxX/rentatlasfinal/main/images/rentatlas-preview.png" />
+  <meta property="og:url" content="https://yourdomain.com/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <style>
+    /* Earthy palette (user supplied) */
+    :root{
+      --olive: #606C38;
+      --deep:  #283618;
+      --cream: #FEFAE0;
+      --tan:   #DDA15E;
+      --copper:#BC6C25;
+
+      --page-olive: #4f5f2f; /* slightly darker background */
+      --card-bg: var(--cream);
+      --muted: #5b6252;
+      --radius: 16px;
+      --maxw: 1100px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color-scheme: light;
+    }
+
+    /* Page bg: green so page reads green-forward */
+    html,body { height:100%; margin:0; background: linear-gradient(180deg, var(--page-olive) 0%, #5a6b39 100%); color:var(--deep); }
+
+    /* Wrap: FULL viewport height so layout feels intentional */
+    .wrap{
+      max-width:var(--maxw);
+      margin: 3vh auto;
+      padding: 28px;
+      min-height: calc(100vh - 48px);  /* forces fill of most of the viewport */
+      display:flex;
+      align-items: center;             /* vertical centering */
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    /* Card is cream so it pops from the green background */
+    .card{
+      width:100%;
+      display:grid;
+      grid-template-columns: 1fr 420px; /* left content, right image/project */
+      gap:24px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding:28px;
+      box-shadow: 0 18px 60px rgba(10,12,8,0.25);
+      border: 1px solid rgba(0,0,0,0.05);
+      box-sizing: border-box;
+      align-items:stretch;
+    }
+
+    /* Left hero: green accent at top-left and an olive side-bar visual */
+    .hero{
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      position:relative;
+      padding-left:18px;
+    }
+    /* subtle vertical accent on left */
+    .hero::before{
+      content:"";
+      position:absolute;
+      left:0; top:18px; bottom:18px;
+      width:6px;
+      background: linear-gradient(180deg, var(--olive), #4a5c29);
+      border-radius: 6px;
+      box-shadow: 0 4px 16px rgba(85,95,38,0.08);
+    }
+
+    .kicker{
+      display:inline-block;
+      background:var(--olive);
+      color: var(--cream);
+      padding:8px 12px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:13px;
+      box-shadow: 0 6px 18px rgba(96,108,56,0.08);
+      width:fit-content;
+    }
+
+    h1 {
+      margin:0;
+      font-size: clamp(26px, 3.8vw, 38px); /* fluid - scales with viewport */
+      line-height:1.02;
+      color:var(--deep);
+    }
+    .subtitle {
+      margin:0;
+      color:var(--muted);
+      font-size: clamp(14px, 1.8vw, 16px);
+      max-width: 70ch;
+    }
+
+    /* Buttons */
+    .actions { display:flex; gap:12px; margin-top:8px; flex-wrap:wrap; }
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 16px; border-radius:12px; text-decoration:none; font-weight:800;
+      color:white; background: linear-gradient(90deg, var(--tan), var(--copper));
+      box-shadow: 0 10px 30px rgba(188,108,37,0.12);
+      min-width:150px;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s;
+      font-size:15px;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 18px 50px rgba(188,108,37,0.16); }
+    .btn.ghost {
+      background: transparent; color: var(--olive); border: 1px solid rgba(0,0,0,0.06); font-weight:700;
+      min-width:130px;
+    }
+
+    /* Right column: project / image card */
+    .project {
+      border-radius: 12px;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      background: linear-gradient(180deg, rgba(96,108,56,0.04), rgba(255,255,255,0.01));
+      border:1px solid rgba(0,0,0,0.03);
+      box-sizing:border-box;
+      justify-content:space-between;
+    }
+    .proj-title { font-size:18px; font-weight:800; color:var(--deep); }
+    .proj-meta { color:var(--muted); font-size:13px; }
+
+    /* IMAGE area: static preview that you can replace with your own image file.
+       Use <img id="custom-image"> or set a background-image on .screenshot.
+    */
+    .screenshot {
+      width:100%;
+      height:260px;
+      border-radius:10px;
+      overflow:hidden;
+      background-size:cover;
+      background-position:center center;
+      background-repeat:no-repeat;
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 8px 26px rgba(0,0,0,0.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background-color:#f2f2e9;
+    }
+    .screenshot img { width:100%; height:100%; object-fit:cover; display:block; }
+
+    .proj-desc { color:var(--muted); font-size:14px; line-height:1.45; }
+
+    footer { margin-top:18px; color:var(--muted); font-size:13px; text-align:center; }
+
+    /* ---- RESPONSIVE RULES ---- */
+    /* On medium/narrow widths stack the grid to single column and increase tap targets */
+    @media (max-width: 980px) {
+      .wrap { padding:18px; min-height: unset; }
+      .card { grid-template-columns: 1fr; padding:20px; gap:18px; }
+      .screenshot { height:200px; }
+      .actions { flex-direction:column; align-items:stretch; }
+      .btn { width:100%; min-width:0; }
+    }
+
+    /* On small phones: slightly tweaked spacing and readable type */
+    @media (max-width: 480px) {
+      .screenshot { height:160px; border-radius:8px; }
+      h1 { font-size:20px; }
+      .kicker { padding:6px 10px; font-size:12px; }
+      .subtitle { font-size:13px; }
+      .project { padding:12px; }
+    }
+
+    a:focus { outline: 4px solid rgba(96,108,56,0.18); outline-offset:3px; }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="main" aria-labelledby="hero-title">
+      <div class="hero">
+        <div class="kicker">GIS · SPATIAL ANALYSIS · URBAN PLANNING · DATA SCIENCE</div>
+        <h1 id="hero-title">Tyler Coull </h1>
+        <p class="subtitle">I build solid geospatial pipelines to answer compelling spatial questions and publish intuitive web maps to share these findinds. Clear methods, performant outputs and authentic results.</p>
+
+        <div class="actions" aria-label="Primary actions">
+          <!-- The 'Open RentAtlas' button can link to your live site.
+               If the live demo is flaky you can change this to just open the static preview image (below). -->
+          <!-- LinkedIn link (replace placeholder) -->
+          <a class="btn ghost" href="https://www.linkedin.com/in/your-linkedin-handle/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+
+        <div style="margin-top:auto;color:var(--muted);font-size:13px">
+          <strong>Fast demos</strong> • Reproducible notebooks • Lightweight front-end
+        </div>
+      </div>
+
+      <aside class="project" aria-labelledby="proj-title">
+        <div>
+          <div class="proj-title" id="proj-title">RentAtlas</div>
+          <div class="proj-meta">Python · GeoPandas · Leaflet · GeoJSON</div>
+        </div>
+
+        <!--
+          Static preview image area.
+          Replace the contents of the <div class="screenshot"> with an <img> tag pointing at your image file:
+            <img id="custom-image" src="images/your-photo.png" alt="RentAtlas preview">
+          OR use the inline style background-image (below).
+        --> <!-- add to your map.html (or landing page) -->
+            <aside class="project-preview">
+            <div class="viewer" id="viewer-preview" role="img" aria-label="RentAtlas preview">
+                <img id="viewer-preview-img"
+                    class="viewer-img"
+                    src="images/rentatlas-preview.png"
+                    alt="RentAtlas preview image (drag to pan, wheel to zoom)"
+                    draggable="false">
+                <div class="img-caption">Drag to pan • Scroll to zoom • Double-click to reset</div>
+            </div>
+            </aside>
+        <div class="screenshot" role="img" aria-label="RentAtlas preview"
+             style="background-image: url('https://raw.githubusercontent.com/XxGeoSlayerxX/rentatlasfinal/main/images/rentatlas-preview.png');">
+          <!-- Optional inline <img> you can uncomment and replace -->
+          <!-- <img id="custom-image" src="images/your-photo.png" alt="Your image"> -->
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <!-- If you want the static preview to link to the live site, wrap the image or use a button.
+               If demo is flaky, remove the href or replace with "#" and rely on the static image only. -->
+          <a class="btn" href="https://XxGeoSlayerxX.github.io/rentatlasfinal/" target="_blank" rel="noopener">Open demo</a>
+        </div>
+
+        <div class="proj-desc">Processed raw municipal datasets into a compact GeoJSON, combined indicators into defensible scores, and produced a clear, responsive map UI optimized for clarity and speed.</div>
+      </aside>
+    </div>
+  </div>
+
+  <footer>
+    © <strong>Tyler Coull</strong> • <a href="mailto:t_coull@live.concordia.ca">t_coull@live.concordia.ca</a> • Made with GeoPandas & Leaflet
+  </footer>
+
+  <!--
+    Notes for customizing:
+    - Replace the screenshot background-image URL above with your own image path (recommended: images/preview-1200x630.png).
+    - If you prefer the <img> tag: uncomment the <img id="custom-image"> inside .screenshot and set src="images/your-image.png".
+    - To remove the live demo behavior entirely, change the Open demo <a> to href="#" or remove the button.
+  -->
+</body>
+</html>
